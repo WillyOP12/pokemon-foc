@@ -25,22 +25,26 @@
         <div id="cardsContainer"></div>
     </section>
 
+    <!-- Secció per obrir sobres -->
+    <section id="packSection">
+        <h2>Obre un sobre</h2>
+        <button id="openPackBtn">Obre el sobre</button>
+        <div id="packMessage"></div>
+        <div id="packCards"></div>
+    </section>
+
     <!-- Secció per intercanviar cartes -->
     <section id="tradeSection">
         <h2>Intercanvia cartes</h2>
         <form id="tradeForm">
             <label for="cardToTrade">Selecciona la carta per intercanviar:</label>
             <select id="cardToTrade" name="cardToTrade">
-                <option value="pikachu">Pikachu</option>
-                <option value="charizard">Charizard</option>
-                <!-- Afegir més cartes disponibles aquí -->
+                <!-- Afegir opcions de cartes disponibles per intercanviar -->
             </select>
             <br>
             <label for="cardToReceive">Selecciona la carta que vols rebre:</label>
             <select id="cardToReceive" name="cardToReceive">
-                <option value="squirtle">Squirtle</option>
-                <option value="bulbasaur">Bulbasaur</option>
-                <!-- Afegir més cartes que vols rebre -->
+                <!-- Afegir opcions de cartes que vols rebre -->
             </select>
             <br>
             <button type="submit">Proposa intercanvi</button>
