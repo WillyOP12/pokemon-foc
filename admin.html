@@ -10,17 +10,17 @@
 
 <body>
 
-    <h1>Gestió de Cartes - Admin</h1>
+    <h1>Administració de la Col·lecció</h1>
 
-    <!-- Formulari per afegir noves cartes -->
+    <!-- Formulari per afegir cartes -->
     <section id="addCardSection">
-        <h2>Afegeix una nova carta</h2>
+        <h2>Afegir nova carta</h2>
         <form id="addCardForm">
             <label for="cardName">Nom de la carta:</label>
-            <input type="text" id="cardName" required>
+            <input type="text" id="cardName" name="cardName" placeholder="Nom de la carta" required>
 
-            <label for="cardRarity">Raresa de la carta:</label>
-            <select id="cardRarity" required>
+            <label for="cardRarity">Raresa:</label>
+            <select id="cardRarity" name="cardRarity" required>
                 <option value="Common">Common</option>
                 <option value="Uncommon">Uncommon</option>
                 <option value="Rare">Rare</option>
@@ -35,29 +35,19 @@
                 <option value="Amazing rare">Amazing rare</option>
             </select>
 
-            <label for="cardImage">Imatge URL de la carta:</label>
-            <input type="text" id="cardImage" required>
+            <label for="cardImage">Puja la imatge de la carta:</label>
+            <input type="file" id="cardImage" name="cardImage" accept="image/*" required>
 
-            <button type="submit">Afegeix carta</button>
+            <button type="submit">Afegir carta</button>
         </form>
     </section>
 
-    <!-- Taula de les cartes de la col·lecció -->
-    <section id="collectionSection">
-        <h2>Col·lecció de Cartes</h2>
-        <table id="collectionTable">
-            <thead>
-                <tr>
-                    <th>Imatge</th>
-                    <th>Nom</th>
-                    <th>Raresa</th>
-                    <th>Accions</th>
-                </tr>
-            </thead>
-            <tbody id="collectionBody">
-                <!-- Les cartes es mostraran aquí -->
-            </tbody>
-        </table>
+    <!-- Mostrar la graella de cartes -->
+    <section id="collectionGrid">
+        <h2>Cartes de la col·lecció</h2>
+        <div id="cardGridContainer">
+            <!-- Les cartes es mostraran aquí -->
+        </div>
     </section>
 
     <script src="script.js"></script>
