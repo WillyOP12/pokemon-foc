@@ -10,46 +10,53 @@
 
 <body>
 
-    <!-- Barra de Progrés -->
-    <div id="progressBarContainer">
-        <h3>Progrés de la teva col·lecció</h3>
-        <div id="progressBar">
-            <div id="progress"></div>
-        </div>
-        <p id="progressPercentage">0% completat</p>
-    </div>
+    <h1>Benvingut a Pokémon Foc</h1>
 
-    <!-- Secció de galeria de cartes -->
-    <section id="cardGallery">
-        <h2>Galeria de Cartes</h2>
-        <div id="cardsContainer"></div>
+    <!-- Barra de progrés per mostrar la col·lecció -->
+    <section id="progressSection">
+        <h2>Progrés de la col·lecció</h2>
+        <progress id="progressBar" value="0" max="100"></progress>
+        <p id="progressText">Carregant la col·lecció...</p>
     </section>
 
-    <!-- Secció per obrir sobres -->
-    <section id="packSection">
+    <!-- Formulari per obrir un sobre -->
+    <section id="openPackSection">
         <h2>Obre un sobre</h2>
-        <button id="openPackBtn">Obre el sobre</button>
-        <div id="packMessage"></div>
-        <div id="packCards"></div>
+        <button id="openPackBtn">Obrir un sobre</button>
+        <p id="noCardsMessage"></p>
     </section>
 
-    <!-- Secció per intercanviar cartes -->
+    <!-- Formulari per intercanviar cartes -->
     <section id="tradeSection">
-        <h2>Intercanvia cartes</h2>
+        <h2>Intercanviar cartes</h2>
         <form id="tradeForm">
-            <label for="cardToTrade">Selecciona la carta per intercanviar:</label>
-            <select id="cardToTrade" name="cardToTrade">
-                <!-- Afegir opcions de cartes disponibles per intercanviar -->
+            <label for="tradeUser">Usuari destinatari:</label>
+            <input type="text" id="tradeUser" name="tradeUser" placeholder="Nom d'usuari per intercanviar" required>
+
+            <label for="tradeCards">Selecciona cartes per intercanviar:</label>
+            <select id="tradeCards" name="tradeCards" multiple required>
+                <!-- Les cartes disponibles per intercanviar es mostraran aquí -->
             </select>
-            <br>
-            <label for="cardToReceive">Selecciona la carta que vols rebre:</label>
-            <select id="cardToReceive" name="cardToReceive">
-                <!-- Afegir opcions de cartes que vols rebre -->
-            </select>
-            <br>
-            <button type="submit">Proposa intercanvi</button>
+
+            <button type="submit">Intercanviar cartes</button>
         </form>
-        <div id="tradeResponse"></div>
+        <p id="tradeMessage"></p>
+    </section>
+
+    <!-- Mostrar les cartes obtingudes al obrir un sobre -->
+    <section id="openedCardsSection">
+        <h2>Cartes obtingudes</h2>
+        <div id="openedCardsContainer">
+            <!-- Les cartes obtingudes apareixeran aquí -->
+        </div>
+    </section>
+
+    <!-- Mostrar la col·lecció -->
+    <section id="collectionSection">
+        <h2>La meva Col·lecció</h2>
+        <div id="collectionContainer">
+            <!-- Les cartes de la col·lecció es mostraran aquí -->
+        </div>
     </section>
 
     <script src="script.js"></script>
