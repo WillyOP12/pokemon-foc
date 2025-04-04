@@ -82,6 +82,23 @@
         window.location.href = "login.html"; // Redirigir a login si no està logejat
     }
 </script>
+<script>
+    // Comprovar si l'usuari està logejat
+    if (localStorage.getItem("loggedIn") !== "true") {
+        window.location.href = "login.html"; // Redirigir a login si no està logejat
+    }
+
+    // Comprovar si l'usuari és admin i mostrar l'enllaç a admin
+    const isAdmin = localStorage.getItem("isAdmin");
+    if (isAdmin === "true") {
+        // Afegir l'enllaç a admin si és admin
+        const adminLink = document.createElement("a");
+        adminLink.href = "admin.html";
+        adminLink.textContent = "Accedir a l'administrador";
+        document.body.appendChild(adminLink);
+    }
+</script>
+
 
         
 </script>
