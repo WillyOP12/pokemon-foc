@@ -1,65 +1,42 @@
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-  <meta charset="UTF-8" />
-  <title>Admin - Gestió de Cartes</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Admin - Pokémon Foc</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Gestor de cartes (Només admins)</h1>
+  <h1>Afegir nova carta 🔥</h1>
 
-  <div id="adminPanel">
-    <h2>Afegir carta</h2>
-    <input type="text" id="cardName" placeholder="Nom de la carta" required />
-    <input type="number" id="rarity" placeholder="Probabilitat (1-100)" required />
-    <button onclick="afegirCarta()">Afegir</button>
+  <input type="text" id="cardName" placeholder="Nom de la carta"><br>
+  <input type="number" id="rarity" placeholder="Probabilitat (1-100)"><br>
+  <input type="text" id="cardImage" placeholder="URL de la imatge"><br>
+  <button onclick="afegirCarta()">Afegir carta</button>
 
-    <h2>Llista de cartes</h2>
-    <ul id="cardList"></ul>
-  </div>
-
-  <a href="home.html">Tornar a la col·lecció</a>
   <script>
-    if (localStorage.getItem("isAdmin") !== "true") {
-      alert("No tens permís per veure això!");
-      window.location.href = "index.html";
-    }
-
-    const cardsDB = JSON.parse(localStorage.getItem("collection") || "[]");
-
-    function render() {
-      const list = document.getElementById("cardList");
-      list.innerHTML = "";
-      cardsDB.forEach((card, i) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <strong>${card.name}</strong> - Raritat: ${card.rarity}%
-          <button onclick="eliminarCarta(${i})">❌ Elimina</button>
-        `;
-        list.appendChild(li);
-      });
-    }
-
+    // Simulem el backend amb localStorage per ara
     function afegirCarta() {
-      const name = document.getElementById("cardName").value.trim();
+      const name = document.getElementById("cardName").value;
       const rarity = parseInt(document.getElementById("rarity").value);
-      if (!name || isNaN(rarity)) return alert("Omple els camps!");
+      const image = document.getElementById("cardImage").value;
 
-      cardsDB.push({ name, rarity });
-      localStorage.setItem("collection", JSON.stringify(cardsDB));
+      if (!name || !rarity || !image) {
+        alert("Has d'omplir tots els camps!");
+        return;
+      }
+
+      const novaCarta = { name, rarity, image };
+
+      let cartes = JSON.parse(localStorage.getItem("cartes")) || [];
+      cartes.push(novaCarta);
+      localStorage.setItem("cartes", JSON.stringify(cartes));
+
+      alert(`Carta "${name}" afegida amb èxit!`);
+      
       document.getElementById("cardName").value = "";
       document.getElementById("rarity").value = "";
-      render();
+      document.getElementById("cardImage").value = "";
     }
-
-    function eliminarCarta(index) {
-      if (!confirm("Segur que vols eliminar aquesta carta?")) return;
-      cardsDB.splice(index, 1);
-      localStorage.setItem("collection", JSON.stringify(cardsDB));
-      render();
-    }
-
-    render();
   </script>
 </body>
 </html>
