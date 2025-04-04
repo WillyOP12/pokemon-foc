@@ -1,84 +1,54 @@
 <!DOCTYPE html>
 <html lang="ca">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pàgina principal</title>
+    <title>Home - Pokémon Foc</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <header>
-        <h1>Benvingut a la teva col·lecció Pokémon Foc!</h1>
-    </header>
 
-    <!-- Barra de progrés -->
-    <section>
-        <h2>Progrés de la col·lecció</h2>
-        <div class="progress-container">
-            <progress id="collectionProgress" value="0" max="100"></progress>
-            <p id="progressText">0% de la col·lecció completada</p>
+    <!-- Barra de Progrés -->
+    <div id="progressBarContainer">
+        <h3>Progrés de la teva col·lecció</h3>
+        <div id="progressBar">
+            <div id="progress"></div>
         </div>
+        <p id="progressPercentage">0% completat</p>
+    </div>
+
+    <!-- Secció de galeria de cartes -->
+    <section id="cardGallery">
+        <h2>Galeria de Cartes</h2>
+        <div id="cardsContainer"></div>
     </section>
 
-    <!-- Formulari per obrir un sobre -->
-    <section>
-        <h2>Obrir un sobre</h2>
-        <button id="openPackButton">Obre un sobre!</button>
-        <p id="packResult"></p>
+    <!-- Secció per intercanviar cartes -->
+    <section id="tradeSection">
+        <h2>Intercanvia cartes</h2>
+        <form id="tradeForm">
+            <label for="cardToTrade">Selecciona la carta per intercanviar:</label>
+            <select id="cardToTrade" name="cardToTrade">
+                <option value="pikachu">Pikachu</option>
+                <option value="charizard">Charizard</option>
+                <!-- Afegir més cartes disponibles aquí -->
+            </select>
+            <br>
+            <label for="cardToReceive">Selecciona la carta que vols rebre:</label>
+            <select id="cardToReceive" name="cardToReceive">
+                <option value="squirtle">Squirtle</option>
+                <option value="bulbasaur">Bulbasaur</option>
+                <!-- Afegir més cartes que vols rebre -->
+            </select>
+            <br>
+            <button type="submit">Proposa intercanvi</button>
+        </form>
+        <div id="tradeResponse"></div>
     </section>
 
-    <!-- Enllaç a l'admin si és admin -->
-    <section id="adminSection" style="display: none;">
-        <a href="admin.html">Accedeix a l'administració</a>
-    </section>
-
-    <script>
-        // Funció per controlar l'accés a l'admin
-        document.addEventListener("DOMContentLoaded", function () {
-            const isAdmin = localStorage.getItem("isAdmin") === "true";
-            const adminSection = document.getElementById("adminSection");
-            if (isAdmin) {
-                adminSection.style.display = "block"; // Mostra l'enllaç a admin si és admin
-            }
-
-            // Barra de progrés: aquí pots fer-ho dinàmicament si tens la informació de la col·lecció
-            const collectionProgress = document.getElementById("collectionProgress");
-            const progressText = document.getElementById("progressText");
-
-            // Exemple de progrés (canvia aquests valors segons la teva lògica)
-            const totalCards = 100; // Exemple de total de cartes
-            const collectedCards = 45; // Exemple de cartes col·leccionades
-
-            const progressPercentage = (collectedCards / totalCards) * 100;
-            collectionProgress.value = progressPercentage;
-            progressText.innerText = `${Math.round(progressPercentage)}% de la col·lecció completada`;
-
-            // Obre un sobre
-            const openPackButton = document.getElementById("openPackButton");
-            const packResult = document.getElementById("packResult");
-
-            openPackButton.addEventListener("click", function () {
-                // Logica per obrir un sobre
-                const cardsInPack = 10; // Nombre de cartes per sobre (exemple)
-                const randomCards = generateRandomCards(cardsInPack);
-
-                // Mostra les cartes al resultat
-                packResult.innerHTML = `Has obert un sobre i has rebut: <br>${randomCards.join('<br>')}`;
-            });
-        });
-
-        // Funció per generar cartes aleatòries (només com exemple)
-        function generateRandomCards(numCards) {
-            const cardTypes = ['Pikachu', 'Charizard', 'Bulbasaur', 'Squirtle', 'Jigglypuff', 'Eevee'];
-            const randomCards = [];
-
-            for (let i = 0; i < numCards; i++) {
-                const randomIndex = Math.floor(Math.random() * cardTypes.length);
-                randomCards.push(cardTypes[randomIndex]);
-            }
-
-            return randomCards;
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
+
 </html>
