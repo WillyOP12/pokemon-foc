@@ -2,41 +2,118 @@
 <html lang="ca">
 <head>
   <meta charset="UTF-8">
-  <title>Admin - Pokémon Foc</title>
+  <title>Admin: Gestió de Cartes</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Estil per a les cartes */
+    .card {
+      border: 2px solid #e74c3c;
+      border-radius: 12px;
+      padding: 10px;
+      margin: 10px;
+      text-align: center;
+      width: 150px;
+      background-color: #fff6f0;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .card img {
+      width: 100px;
+      height: auto;
+      border-radius: 10px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Afegir nova carta 🔥</h1>
+  <h1>Gestió de Cartes Pokémon Foc 🔥 (Admin)</h1>
 
-  <input type="text" id="cardName" placeholder="Nom de la carta"><br>
-  <input type="number" id="rarity" placeholder="Probabilitat (1-100)"><br>
-  <input type="text" id="cardImage" placeholder="URL de la imatge"><br>
-  <button onclick="afegirCarta()">Afegir carta</button>
+  <!-- Formulari per afegir una nova carta -->
+  <h3>Afegir una nova carta</h3>
+  <form id="addCardForm">
+    <label for="cardName">Nom de la carta:</label>
+    <input type="text" id="cardName" required><br><br>
+
+    <label for="cardRarity">Raritat:</label>
+    <select id="cardRarity">
+      <option value="Common">Common</option>
+      <option value="Uncommon">Uncommon</option>
+      <option value="Rare">Rare</option>
+      <option value="Double Rare">Double Rare</option>
+      <option value="ACE SPEC Rare">ACE SPEC Rare</option>
+      <option value="Illustration Rare">Illustration Rare</option>
+      <option value="Ultra Rare">Ultra Rare</option>
+      <option value="Shiny Rare">Shiny Rare</option>
+      <option value="Shiny Ultra Rare">Shiny Ultra Rare</option>
+      <option value="Special Illustration Rare">Special Illustration Rare</option>
+      <option value="Hyper Rare">Hyper Rare</option>
+      <option value="Amazing Rare">Amazing Rare</option>
+    </select><br><br>
+
+    <label for="cardImage">Imatge de la carta:</label>
+    <input type="file" id="cardImage" accept="image/*" required><br><br>
+
+    <button type="submit">Afegir Carta</button>
+  </form>
+
+  <h3>Cartes actuals:</h3>
+  <div id="cardsContainer"></div>
 
   <script>
-    // Simulem el backend amb localStorage per ara
-    function afegirCarta() {
-      const name = document.getElementById("cardName").value;
-      const rarity = parseInt(document.getElementById("rarity").value);
-      const image = document.getElementById("cardImage").value;
+    // Recuperar les cartes des de LocalStorage
+    let cartes = JSON.parse(localStorage.getItem("cartes")) || [];
 
-      if (!name || !rarity || !image) {
-        alert("Has d'omplir tots els camps!");
-        return;
+    // Mostrar les cartes actuals
+    const displayCards = () => {
+      const cardsContainer = document.getElementById("cardsContainer");
+      cardsContainer.innerHTML = ""; // Netejar contenidor
+      cartes.forEach((carta, index) => {
+        const cardDiv = document.createElement("div");
+        cardDiv.className = "card";
+        cardDiv.innerHTML = `
+          <img src="${carta.image}" alt="${carta.name}">
+          <h3>${carta.name}</h3>
+          <p>Raritat: ${carta.rarity}</p>
+          <button onclick="deleteCard(${index})">Eliminar Carta</button>
+        `;
+        cardsContainer.appendChild(cardDiv);
+      });
+    };
+
+    // Afegir una nova carta
+    const addCardForm = document.getElementById("addCardForm");
+    addCardForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const cardName = document.getElementById("cardName").value;
+      const cardRarity = document.getElementById("cardRarity").value;
+      const cardImage = document.getElementById("cardImage").files[0];
+
+      if (cardImage) {
+        const reader = new FileReader();
+        reader.onloadend = function () {
+          const cardData = {
+            name: cardName,
+            rarity: cardRarity,
+            image: reader.result // Aquí emmagatzemem la imatge com una URL base64
+          };
+
+          cartes.push(cardData);
+          localStorage.setItem("cartes", JSON.stringify(cartes)); // Guardem a LocalStorage
+          displayCards(); // Actualitzem les cartes mostrades
+        };
+
+        reader.readAsDataURL(cardImage); // Convertim la imatge en una URL base64
       }
+    });
 
-      const novaCarta = { name, rarity, image };
+    // Eliminar una carta
+    const deleteCard = (index) => {
+      cartes.splice(index, 1); // Eliminem la carta
+      localStorage.setItem("cartes", JSON.stringify(cartes)); // Guardem els canvis
+      displayCards(); // Actualitzem les cartes mostrades
+    };
 
-      let cartes = JSON.parse(localStorage.getItem("cartes")) || [];
-      cartes.push(novaCarta);
-      localStorage.setItem("cartes", JSON.stringify(cartes));
-
-      alert(`Carta "${name}" afegida amb èxit!`);
-      
-      document.getElementById("cardName").value = "";
-      document.getElementById("rarity").value = "";
-      document.getElementById("cardImage").value = "";
-    }
+    // Inicialitzar la pàgina amb les cartes actuals
+    displayCards();
   </script>
 </body>
 </html>
