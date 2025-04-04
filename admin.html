@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Gestió de la Col·lecció de Cartes</h1>
+
+    <h2>Afegeix nova carta</h2>
+    <form id="addCardForm">
+        <label for="cardName">Nom de la carta:</label>
+        <input type="text" id="cardName" required>
+
+        <label for="cardRarity">Raresa de la carta:</label>
+        <input type="text" id="cardRarity" required>
+
+        <label for="cardImage">URL de la imatge de la carta:</label>
+        <input type="text" id="cardImage" required>
+
+        <button type="submit">Afegir Carta</button>
+    </form>
+
+    <h2>Cartes de la Col·lecció</h2>
+    <table id="cardsCollectionTable">
+        <thead>
+            <tr>
+                <th>Nom de la Carta</th>
+                <th>Raresa</th>
+                <th>Imatge</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script src="script.js"></script>
+</body>
+</html>
