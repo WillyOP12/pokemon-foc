@@ -12,6 +12,36 @@
 
     <h1>Gestió de Cartes - Admin</h1>
 
+    <!-- Formulari per afegir noves cartes -->
+    <section id="addCardSection">
+        <h2>Afegeix una nova carta</h2>
+        <form id="addCardForm">
+            <label for="cardName">Nom de la carta:</label>
+            <input type="text" id="cardName" required>
+
+            <label for="cardRarity">Raresa de la carta:</label>
+            <select id="cardRarity" required>
+                <option value="Common">Common</option>
+                <option value="Uncommon">Uncommon</option>
+                <option value="Rare">Rare</option>
+                <option value="Double Rare">Double Rare</option>
+                <option value="ACE SPEC Rare">ACE SPEC Rare</option>
+                <option value="Illustration Rare">Illustration Rare</option>
+                <option value="Ultra Rare">Ultra Rare</option>
+                <option value="Shiny Rare">Shiny Rare</option>
+                <option value="Shiny Ultra Rare">Shiny Ultra Rare</option>
+                <option value="Special Illustration Rare">Special Illustration Rare</option>
+                <option value="Hyper Rare">Hyper Rare</option>
+                <option value="Amazing rare">Amazing rare</option>
+            </select>
+
+            <label for="cardImage">Imatge URL de la carta:</label>
+            <input type="text" id="cardImage" required>
+
+            <button type="submit">Afegeix carta</button>
+        </form>
+    </section>
+
     <!-- Taula de les cartes de la col·lecció -->
     <section id="collectionSection">
         <h2>Col·lecció de Cartes</h2>
@@ -30,7 +60,7 @@
         </table>
     </section>
 
-    <script src="script1.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>
