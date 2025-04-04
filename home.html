@@ -1,180 +1,145 @@
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-  <meta charset="UTF-8" />
-  <title>Col·lecció de Cartes</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>La Meva Col·lecció i Intercanvis</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .card {
+      border: 2px solid #e74c3c;
+      border-radius: 12px;
+      padding: 10px;
+      margin: 10px;
+      text-align: center;
+      width: 150px;
+      background-color: #fff6f0;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .card img {
+      width: 100px;
+      height: auto;
+      border-radius: 10px;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .notifications {
+      margin-top: 30px;
+    }
+    .notification {
+      background-color: #f39c12;
+      padding: 10px;
+      border-radius: 5px;
+      margin: 5px 0;
+    }
+    .interchange {
+      margin-top: 30px;
+    }
+    .card-select {
+      margin: 10px;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Benvingut a la teva col·lecció!</h1>
-  <p id="progress"></p>
-  <button onclick="obrirSobre()">Obrir sobre (cada 2 dies)</button>
+  <h1>Col·lecció Pokémon Foc 🔥</h1>
 
-  <h2>Les teves cartes:</h2>
-  <ul id="userCards"></ul>
-  <div class="card">
-  <img src="${card.image}" alt="${card.name}" class="card-image">
-  <p>${card.name}</p>
+  <!-- Secció de col·lecció -->
+  <div class="container" id="coleccio"></div>
+
+  <div class="interchange">
+    <h3>Sol·licita un intercanvi</h3>
+    <label for="cartaIntercanvi">Escull una carta per intercanviar:</label>
+    <select id="cartaIntercanvi" class="card-select">
+      <option value="">Cap carta</option>
+    </select>
+
+    <label for="cartaSol·licitada">Escull la carta que vols obtenir:</label>
+    <select id="cartaSol·licitada" class="card-select">
+      <option value="">Cap carta</option>
+    </select>
+    
+    <button onclick="sol·licitarIntercanvi()">Sol·licitar intercanvi</button>
   </div>
 
-
-  <h2>Notificacions:</h2>
-  <ul id="notifications"></ul>
-
-  <h2>Intercanviar cartes</h2>
-  <button onclick="mostrarIntercanvis()">Mostrar cartes per intercanviar</button>
-  <div id="tradeOptions" style="display: none;">
-    <h3>Tria una carta per intercanviar:</h3>
-    <ul id="tradeCardsList"></ul>
+  <!-- Secció de notificacions -->
+  <div class="notifications" id="notificacions">
+    <h3>Les teves notificacions:</h3>
+    <div id="notificacionsList"></div>
   </div>
-
-  <a href="admin.html">Admin</a>
 
   <script>
-    const username = localStorage.getItem("username") || "Anònim";
-    const allCards = JSON.parse(localStorage.getItem("collection") || "[]");
-    const userData = JSON.parse(localStorage.getItem("users") || "{}");
-    const today = new Date().toISOString().slice(0, 10);
+    const cartes = JSON.parse(localStorage.getItem("cartes")) || [];
+    let notificacions = JSON.parse(localStorage.getItem("notificacions")) || [];
+    
+    const contenedor = document.getElementById("coleccio");
+    const selectIntercanvi = document.getElementById("cartaIntercanvi");
+    const selectSolicitada = document.getElementById("cartaSol·licitada");
+    const notificacionsDiv = document.getElementById("notificacionsList");
 
-    if (!userData[username]) {
-      userData[username] = { cards: [], lastPack: null, notifications: [] };
-    }
-
-    function updateProgress() {
-      const userCards = userData[username].cards;
-      const unique = new Set(userCards.map(c => c.name));
-      const percent = Math.round((unique.size / allCards.length) * 100);
-      document.getElementById("progress").textContent = `Compleció: ${percent}% (${unique.size}/${allCards.length})`;
-    }
-
-    function render() {
-      const list = document.getElementById("userCards");
-      list.innerHTML = "";
-      const grouped = {};
-      userData[username].cards.forEach(card => {
-        grouped[card.name] = (grouped[card.name] || 0) + 1;
-      });
-      for (let name in grouped) {
-        const li = document.createElement("li");
-        li.textContent = `${name} ×${grouped[name]}`;
-        list.appendChild(li);
-      }
-      updateProgress();
-      renderNotifications();
-    }
-
-    function renderNotifications() {
-      const notificationList = document.getElementById("notifications");
-      notificationList.innerHTML = "";
-      userData[username].notifications.forEach((notification, i) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-          Sol·licitud d'intercanvi de la carta: ${notification.cardName} per ${notification.offeredCard}.
-          <button onclick="acceptTrade(${i})">Acceptar</button>
+    if (cartes.length === 0) {
+      contenedor.innerHTML = "<p>No tens cap carta encara!</p>";
+    } else {
+      cartes.forEach(carta => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <img src="${carta.image}" alt="${carta.name}">
+          <h3>${carta.name}</h3>
+          <p>Probabilitat: ${carta.rarity}</p>
         `;
-        notificationList.appendChild(li);
+        contenedor.appendChild(div);
+
+        // Afegir les cartes als selects per intercanviar
+        const option = document.createElement("option");
+        option.value = carta.name;
+        option.textContent = carta.name;
+        selectIntercanvi.appendChild(option);
+        selectSolicitada.appendChild(option.cloneNode(true));
       });
     }
 
-    function acceptTrade(notificationIndex) {
-      const notification = userData[username].notifications[notificationIndex];
-      // Elimina la notificació de l'usuari que la rep
-      userData[username].notifications.splice(notificationIndex, 1);
+    // Funció per sol·licitar un intercanvi
+    function sol·licitarIntercanvi() {
+      const cartaIntercanvi = selectIntercanvi.value;
+      const cartaSol·licitada = selectSolicitada.value;
 
-      // Afegeix la carta de l'intercanvi
-      userData[username].cards.push({ name: notification.cardName, rarity: 10 });
-      // Elimina la carta que va oferir
-      userData[notification.trader].cards = userData[notification.trader].cards.filter(
-        card => card.name !== notification.offeredCard
-      );
-
-      // Guarda els canvis
-      localStorage.setItem("users", JSON.stringify(userData));
-      render();
-      alert("Intercanvi acceptat!");
-    }
-
-    function mostrarIntercanvis() {
-      const tradeCardsList = document.getElementById("tradeCardsList");
-      tradeCardsList.innerHTML = "";
-      userData[username].cards.forEach(card => {
-        const li = document.createElement("li");
-        li.innerHTML = `${card.name} 
-          <button onclick="sol·licitarIntercanvi('${card.name}')">Sol·licitar intercanvi</button>`;
-        tradeCardsList.appendChild(li);
-      });
-      document.getElementById("tradeOptions").style.display = "block";
-    }
-
-    function sol·licitarIntercanvi(cardName) {
-      const card = userData[username].cards.find(c => c.name === cardName);
-      if (!card) return alert("Aquesta carta no la tens.");
-
-      // Mostrar les cartes dels altres usuaris que podrien intercanviar
-      const availableTrades = [];
-
-      for (let otherUser in userData) {
-        if (otherUser === username) continue;
-        const otherUserCards = userData[otherUser].cards;
-        otherUserCards.forEach(otherCard => {
-          availableTrades.push({ trader: otherUser, card: otherCard });
-        });
-      }
-
-      const trades = availableTrades.filter(
-        trade => trade.card.name !== cardName // només buscar intercanvis de cartes diferents
-      );
-
-      if (trades.length === 0) {
-        alert("No hi ha cartes per intercanviar.");
+      if (!cartaIntercanvi || !cartaSol·licitada) {
+        alert("Has d'escollir una carta per intercanviar i una carta per sol·licitar.");
         return;
       }
 
-      // Sol·licitar intercanvi als usuaris disponibles
-      trades.forEach(trade => {
-        userData[trade.trader].notifications.push({
-          cardName,
-          offeredCard: card.name,
-          trader: username
-        });
-      });
-
-      localStorage.setItem("users", JSON.stringify(userData));
-      alert("Sol·licitud enviada als usuaris per intercanviar.");
-    }
-
-    function obrirSobre() {
-      const lastDate = userData[username].lastPack;
-      const now = new Date();
-      if (lastDate && (new Date(lastDate).getTime() + 2 * 24 * 60 * 60 * 1000) > now.getTime()) {
-        alert("Has d’esperar 2 dies per obrir un altre sobre!");
+      const cartaSolicitada = cartes.find(carta => carta.name === cartaSol·licitada);
+      if (!cartaSolicitada) {
+        alert("Aquesta carta no està disponible.");
         return;
       }
 
-      const nouSobre = [];
-      for (let i = 0; i < 10; i++) {
-        const carta = escollirCartaAmbProbabilitat();
-        nouSobre.push(carta);
-      }
-
-      userData[username].cards.push(...nouSobre);
-      userData[username].lastPack = now.toISOString().slice(0, 10);
-      localStorage.setItem("users", JSON.stringify(userData));
-      render();
-      alert("Has obert un sobre!");
+      // Afegir notificació a les persones que tenen la carta sol·licitada
+      let notificacio = `Vols intercanviar la carta "${cartaIntercanvi}" per la carta "${cartaSol·licitada}".`;
+      
+      notificacions.push(notificacio);
+      localStorage.setItem("notificacions", JSON.stringify(notificacions));
+      
+      // Actualitzar les notificacions a la pàgina
+      mostrarNotificacions();
     }
 
-    function escollirCartaAmbProbabilitat() {
-      const totalPes = allCards.reduce((acc, carta) => acc + carta.rarity, 0);
-      let aleatori = Math.random() * totalPes;
-      for (let carta of allCards) {
-        if (aleatori < carta.rarity) return carta;
-        aleatori -= carta.rarity;
-      }
-      return allCards[0]; // fallback
+    // Mostrar notificacions
+    function mostrarNotificacions() {
+      notificacionsDiv.innerHTML = "";
+      notificacions.forEach(noti => {
+        const div = document.createElement("div");
+        div.className = "notification";
+        div.textContent = noti;
+        notificacionsDiv.appendChild(div);
+      });
     }
 
-    render();
+    // Carregar notificacions al començar
+    mostrarNotificacions();
   </script>
 </body>
 </html>
