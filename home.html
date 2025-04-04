@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <title>Col·lecció de Cartes</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Benvingut a la teva col·lecció!</h1>
+  <p id="progress"></p>
+  <button onclick="obrirSobre()">Obrir sobre (cada 2 dies)</button>
+
+  <h2>Les teves cartes:</h2>
+  <ul id="userCards"></ul>
+
+  <h2>Notificacions:</h2>
+  <ul id="notifications"></ul>
+
+  <h2>Intercanviar cartes</h2>
+  <button onclick="mostrarIntercanvis()">Mostrar cartes per intercanviar</button>
+  <div id="tradeOptions" style="display: none;">
+    <h3>Tria una carta per intercanviar:</h3>
+    <ul id="tradeCardsList"></ul>
+  </div>
+
+  <a href="admin.html">Admin</a>
+
+  <script>
+    const username = localStorage.getItem("username") || "Anònim";
+    const allCards = JSON.parse(localStorage.getItem("collection") || "[]");
+    const userData = JSON.parse(localStorage.getItem("users") || "{}");
+    const today = new Date().toISOString().slice(0, 10);
+
+    if (!userData[username]) {
+      userData[username] = { cards: [], lastPack: null, notifications: [] };
+    }
+
+    function updateProgress() {
+      const userCards = userData[username].cards;
+      const unique = new Set(userCards.map(c => c.name));
+      const percent = Math.round((unique.size / allCards.length) * 100);
+      document.getElementById("progress").textContent = `Compleció: ${percent}% (${unique.size}/${allCards.length})`;
+    }
+
+    function render() {
+      const list = document.getElementById("userCards");
+      list.innerHTML = "";
+      const grouped = {};
+      userData[username].cards.forEach(card => {
+        grouped[card.name] = (grouped[card.name] || 0) + 1;
+      });
+      for (let name in grouped) {
+        const li = document.createElement("li");
+        li.textContent = `${name} ×${grouped[name]}`;
+        list.appendChild(li);
+      }
+      updateProgress();
+      renderNotifications();
+    }
+
+    function renderNotifications() {
+      const notificationList = document.getElementById("notifications");
+      notificationList.innerHTML = "";
+      userData[username].notifications.forEach((notification, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          Sol·licitud d'intercanvi de la carta: ${notification.cardName} per ${notification.offeredCard}.
+          <button onclick="acceptTrade(${i})">Acceptar</button>
+        `;
+        notificationList.appendChild(li);
+      });
+    }
+
+    function acceptTrade(notificationIndex) {
+      const notification = userData[username].notifications[notificationIndex];
+      // Elimina la notificació de l'usuari que la rep
+      userData[username].notifications.splice(notificationIndex, 1);
+
+      // Afegeix la carta de l'intercanvi
+      userData[username].cards.push({ name: notification.cardName, rarity: 10 });
+      // Elimina la carta que va oferir
+      userData[notification.trader].cards = userData[notification.trader].cards.filter(
+        card => card.name !== notification.offeredCard
+      );
+
+      // Guarda els canvis
+      localStorage.setItem("users", JSON.stringify(userData));
+      render();
+      alert("Intercanvi acceptat!");
+    }
+
+    function mostrarIntercanvis() {
+      const tradeCardsList = document.getElementById("tradeCardsList");
+      tradeCardsList.innerHTML = "";
+      userData[username].cards.forEach(card => {
+        const li = document.createElement("li");
+        li.innerHTML = `${card.name} 
+          <button onclick="sol·licitarIntercanvi('${card.name}')">Sol·licitar intercanvi</button>`;
+        tradeCardsList.appendChild(li);
+      });
+      document.getElementById("tradeOptions").style.display = "block";
+    }
+
+    function sol·licitarIntercanvi(cardName) {
+      const card = userData[username].cards.find(c => c.name === cardName);
+      if (!card) return alert("Aquesta carta no la tens.");
+
+      // Mostrar les cartes dels altres usuaris que podrien intercanviar
+      const availableTrades = [];
+
+      for (let otherUser in userData) {
+        if (otherUser === username) continue;
+        const otherUserCards = userData[otherUser].cards;
+        otherUserCards.forEach(otherCard => {
+          availableTrades.push({ trader: otherUser, card: otherCard });
+        });
+      }
+
+      const trades = availableTrades.filter(
+        trade => trade.card.name !== cardName // només buscar intercanvis de cartes diferents
+      );
+
+      if (trades.length === 0) {
+        alert("No hi ha cartes per intercanviar.");
+        return;
+      }
+
+      // Sol·licitar intercanvi als usuaris disponibles
+      trades.forEach(trade => {
+        userData[trade.trader].notifications.push({
+          cardName,
+          offeredCard: card.name,
+          trader: username
+        });
+      });
+
+      localStorage.setItem("users", JSON.stringify(userData));
+      alert("Sol·licitud enviada als usuaris per intercanviar.");
+    }
+
+    function obrirSobre() {
+      const lastDate = userData[username].lastPack;
+      const now = new Date();
+      if (lastDate && (new Date(lastDate).getTime() + 2 * 24 * 60 * 60 * 1000) > now.getTime()) {
+        alert("Has d’esperar 2 dies per obrir un altre sobre!");
+        return;
+      }
+
+      const nouSobre = [];
+      for (let i = 0; i < 10; i++) {
+        const carta = escollirCartaAmbProbabilitat();
+        nouSobre.push(carta);
+      }
+
+      userData[username].cards.push(...nouSobre);
+      userData[username].lastPack = now.toISOString().slice(0, 10);
+      localStorage.setItem("users", JSON.stringify(userData));
+      render();
+      alert("Has obert un sobre!");
+    }
+
+    function escollirCartaAmbProbabilitat() {
+      const totalPes = allCards.reduce((acc, carta) => acc + carta.rarity, 0);
+      let aleatori = Math.random() * totalPes;
+      for (let carta of allCards) {
+        if (aleatori < carta.rarity) return carta;
+        aleatori -= carta.rarity;
+      }
+      return allCards[0]; // fallback
+    }
+
+    render();
+  </script>
+</body>
+</html>

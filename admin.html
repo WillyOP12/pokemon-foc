@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin - Gestió de Cartes</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Gestor de cartes (Només admins)</h1>
+
+  <div id="adminPanel">
+    <h2>Afegir carta</h2>
+    <input type="text" id="cardName" placeholder="Nom de la carta" required />
+    <input type="number" id="rarity" placeholder="Probabilitat (1-100)" required />
+    <button onclick="afegirCarta()">Afegir</button>
+
+    <h2>Llista de cartes</h2>
+    <ul id="cardList"></ul>
+  </div>
+
+  <a href="home.html">Tornar a la col·lecció</a>
+  <script>
+    if (localStorage.getItem("isAdmin") !== "true") {
+      alert("No tens permís per veure això!");
+      window.location.href = "index.html";
+    }
+
+    const cardsDB = JSON.parse(localStorage.getItem("collection") || "[]");
+
+    function render() {
+      const list = document.getElementById("cardList");
+      list.innerHTML = "";
+      cardsDB.forEach((card, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>${card.name}</strong> - Raritat: ${card.rarity}%
+          <button onclick="eliminarCarta(${i})">❌ Elimina</button>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    function afegirCarta() {
+      const name = document.getElementById("cardName").value.trim();
+      const rarity = parseInt(document.getElementById("rarity").value);
+      if (!name || isNaN(rarity)) return alert("Omple els camps!");
+
+      cardsDB.push({ name, rarity });
+      localStorage.setItem("collection", JSON.stringify(cardsDB));
+      document.getElementById("cardName").value = "";
+      document.getElementById("rarity").value = "";
+      render();
+    }
+
+    function eliminarCarta(index) {
+      if (!confirm("Segur que vols eliminar aquesta carta?")) return;
+      cardsDB.splice(index, 1);
+      localStorage.setItem("collection", JSON.stringify(cardsDB));
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>
