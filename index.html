@@ -1,75 +1,43 @@
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Colecció Pokémon</title>
-    <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-firestore.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pokémon Foc - Inici de Sessió</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2rem;
+      background-color: #fff5e1;
+    }
+    input {
+      margin: 0.5rem;
+      padding: 0.5rem;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      background-color: #ff6b6b;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #e63946;
+    }
+  </style>
 </head>
 <body>
-    <h1>Colecció de cartes Pokémon</h1>
-    <div id="registerForm">
-        <h2>Registra't</h2>
-        <input type="email" id="registerEmail" placeholder="Correu electrònic" required />
-        <input type="password" id="registerPassword" placeholder="Contrasenya" required />
-        <button onclick="register()">Registrar-se</button>
-    </div>
+  <h1>Benvingut a Pokémon Foc 🔥</h1>
+  <p>Inicia sessió per començar a col·leccionar!</p>
 
-    <div id="loginForm">
-        <h2>Inicia sessió</h2>
-        <input type="email" id="loginEmail" placeholder="Correu electrònic" required />
-        <input type="password" id="loginPassword" placeholder="Contrasenya" required />
-        <button onclick="login()">Iniciar sessió</button>
-    </div>
+  <input type="text" id="username" placeholder="Nom d'usuari" />
+  <br />
+  <input type="password" id="password" placeholder="Contrasenya" />
+  <br />
+  <button onclick="login()">Iniciar sessió</button>
 
-    <div id="cardsList"></div>
-
-    <script>
-        const firebaseConfig = {
-            apiKey: "TÒT_LA_TEVA_API_KEY",
-            authDomain: "TÒT_LA_TEVA_AUTH_DOMAIN",
-            projectId: "TÒT_LA_TEVA_PROJECT_ID",
-            storageBucket: "TÒT_LA_TEVA_STORAGE_BUCKET",
-            messagingSenderId: "TÒT_LA_TEVA_MESSAGING_SENDER_ID",
-            appId: "TÒT_LA_TEVA_APP_ID"
-        };
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // Registre d'usuari
-        function register() {
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            auth.createUserWithEmailAndPassword(email, password)
-                .then(() => alert('Usuari registrat'))
-                .catch((error) => alert(error.message));
-        }
-
-        // Inici de sessió
-        function login() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            auth.signInWithEmailAndPassword(email, password)
-                .then(() => alert('Benvingut!'))
-                .catch((error) => alert(error.message));
-        }
-
-        // Obtenir les cartes
-        function getCards() {
-            db.collection('cards').get().then((querySnapshot) => {
-                let cardsHTML = '';
-                querySnapshot.forEach((doc) => {
-                    const card = doc.data();
-                    cardsHTML += `<div>${card.name}</div>`;
-                });
-                document.getElementById('cardsList').innerHTML = cardsHTML;
-            });
-        }
-
-        getCards();
-    </script>
+  <script src="script.js"></script>
 </body>
 </html>
