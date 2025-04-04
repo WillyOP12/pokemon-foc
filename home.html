@@ -1,145 +1,84 @@
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-  <meta charset="UTF-8">
-  <title>La Meva Col·lecció i Intercanvis</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    .card {
-      border: 2px solid #e74c3c;
-      border-radius: 12px;
-      padding: 10px;
-      margin: 10px;
-      text-align: center;
-      width: 150px;
-      background-color: #fff6f0;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    }
-    .card img {
-      width: 100px;
-      height: auto;
-      border-radius: 10px;
-    }
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .notifications {
-      margin-top: 30px;
-    }
-    .notification {
-      background-color: #f39c12;
-      padding: 10px;
-      border-radius: 5px;
-      margin: 5px 0;
-    }
-    .interchange {
-      margin-top: 30px;
-    }
-    .card-select {
-      margin: 10px;
-      font-size: 14px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pàgina principal</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Col·lecció Pokémon Foc 🔥</h1>
+    <header>
+        <h1>Benvingut a la teva col·lecció Pokémon Foc!</h1>
+    </header>
 
-  <!-- Secció de col·lecció -->
-  <div class="container" id="coleccio"></div>
+    <!-- Barra de progrés -->
+    <section>
+        <h2>Progrés de la col·lecció</h2>
+        <div class="progress-container">
+            <progress id="collectionProgress" value="0" max="100"></progress>
+            <p id="progressText">0% de la col·lecció completada</p>
+        </div>
+    </section>
 
-  <div class="interchange">
-    <h3>Sol·licita un intercanvi</h3>
-    <label for="cartaIntercanvi">Escull una carta per intercanviar:</label>
-    <select id="cartaIntercanvi" class="card-select">
-      <option value="">Cap carta</option>
-    </select>
+    <!-- Formulari per obrir un sobre -->
+    <section>
+        <h2>Obrir un sobre</h2>
+        <button id="openPackButton">Obre un sobre!</button>
+        <p id="packResult"></p>
+    </section>
 
-    <label for="cartaSol·licitada">Escull la carta que vols obtenir:</label>
-    <select id="cartaSol·licitada" class="card-select">
-      <option value="">Cap carta</option>
-    </select>
-    
-    <button onclick="sol·licitarIntercanvi()">Sol·licitar intercanvi</button>
-  </div>
+    <!-- Enllaç a l'admin si és admin -->
+    <section id="adminSection" style="display: none;">
+        <a href="admin.html">Accedeix a l'administració</a>
+    </section>
 
-  <!-- Secció de notificacions -->
-  <div class="notifications" id="notificacions">
-    <h3>Les teves notificacions:</h3>
-    <div id="notificacionsList"></div>
-  </div>
+    <script>
+        // Funció per controlar l'accés a l'admin
+        document.addEventListener("DOMContentLoaded", function () {
+            const isAdmin = localStorage.getItem("isAdmin") === "true";
+            const adminSection = document.getElementById("adminSection");
+            if (isAdmin) {
+                adminSection.style.display = "block"; // Mostra l'enllaç a admin si és admin
+            }
 
-  <script>
-    const cartes = JSON.parse(localStorage.getItem("cartes")) || [];
-    let notificacions = JSON.parse(localStorage.getItem("notificacions")) || [];
-    
-    const contenedor = document.getElementById("coleccio");
-    const selectIntercanvi = document.getElementById("cartaIntercanvi");
-    const selectSolicitada = document.getElementById("cartaSol·licitada");
-    const notificacionsDiv = document.getElementById("notificacionsList");
+            // Barra de progrés: aquí pots fer-ho dinàmicament si tens la informació de la col·lecció
+            const collectionProgress = document.getElementById("collectionProgress");
+            const progressText = document.getElementById("progressText");
 
-    if (cartes.length === 0) {
-      contenedor.innerHTML = "<p>No tens cap carta encara!</p>";
-    } else {
-      cartes.forEach(carta => {
-        const div = document.createElement("div");
-        div.className = "card";
-        div.innerHTML = `
-          <img src="${carta.image}" alt="${carta.name}">
-          <h3>${carta.name}</h3>
-          <p>Probabilitat: ${carta.rarity}</p>
-        `;
-        contenedor.appendChild(div);
+            // Exemple de progrés (canvia aquests valors segons la teva lògica)
+            const totalCards = 100; // Exemple de total de cartes
+            const collectedCards = 45; // Exemple de cartes col·leccionades
 
-        // Afegir les cartes als selects per intercanviar
-        const option = document.createElement("option");
-        option.value = carta.name;
-        option.textContent = carta.name;
-        selectIntercanvi.appendChild(option);
-        selectSolicitada.appendChild(option.cloneNode(true));
-      });
-    }
+            const progressPercentage = (collectedCards / totalCards) * 100;
+            collectionProgress.value = progressPercentage;
+            progressText.innerText = `${Math.round(progressPercentage)}% de la col·lecció completada`;
 
-    // Funció per sol·licitar un intercanvi
-    function sol·licitarIntercanvi() {
-      const cartaIntercanvi = selectIntercanvi.value;
-      const cartaSol·licitada = selectSolicitada.value;
+            // Obre un sobre
+            const openPackButton = document.getElementById("openPackButton");
+            const packResult = document.getElementById("packResult");
 
-      if (!cartaIntercanvi || !cartaSol·licitada) {
-        alert("Has d'escollir una carta per intercanviar i una carta per sol·licitar.");
-        return;
-      }
+            openPackButton.addEventListener("click", function () {
+                // Logica per obrir un sobre
+                const cardsInPack = 10; // Nombre de cartes per sobre (exemple)
+                const randomCards = generateRandomCards(cardsInPack);
 
-      const cartaSolicitada = cartes.find(carta => carta.name === cartaSol·licitada);
-      if (!cartaSolicitada) {
-        alert("Aquesta carta no està disponible.");
-        return;
-      }
+                // Mostra les cartes al resultat
+                packResult.innerHTML = `Has obert un sobre i has rebut: <br>${randomCards.join('<br>')}`;
+            });
+        });
 
-      // Afegir notificació a les persones que tenen la carta sol·licitada
-      let notificacio = `Vols intercanviar la carta "${cartaIntercanvi}" per la carta "${cartaSol·licitada}".`;
-      
-      notificacions.push(notificacio);
-      localStorage.setItem("notificacions", JSON.stringify(notificacions));
-      
-      // Actualitzar les notificacions a la pàgina
-      mostrarNotificacions();
-    }
+        // Funció per generar cartes aleatòries (només com exemple)
+        function generateRandomCards(numCards) {
+            const cardTypes = ['Pikachu', 'Charizard', 'Bulbasaur', 'Squirtle', 'Jigglypuff', 'Eevee'];
+            const randomCards = [];
 
-    // Mostrar notificacions
-    function mostrarNotificacions() {
-      notificacionsDiv.innerHTML = "";
-      notificacions.forEach(noti => {
-        const div = document.createElement("div");
-        div.className = "notification";
-        div.textContent = noti;
-        notificacionsDiv.appendChild(div);
-      });
-    }
+            for (let i = 0; i < numCards; i++) {
+                const randomIndex = Math.floor(Math.random() * cardTypes.length);
+                randomCards.push(cardTypes[randomIndex]);
+            }
 
-    // Carregar notificacions al començar
-    mostrarNotificacions();
-  </script>
+            return randomCards;
+        }
+    </script>
 </body>
 </html>
